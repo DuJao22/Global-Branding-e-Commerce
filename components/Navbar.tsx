@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, Search, LogOut, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, LogOut, LayoutDashboard, ChevronRight, Terminal } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 
 export const Navbar: React.FC = () => {
@@ -192,9 +192,12 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Sidebar Footer */}
-            <div className="p-6 border-t border-gray-800 text-xs text-gray-500 text-center">
-                <p>Curators of Premium Goods</p>
-                <p>&copy; {new Date().getFullYear()} Global Branding</p>
+            <div className="p-6 border-t border-gray-800 text-xs text-center text-gray-500">
+                <p className="mb-2">&copy; {new Date().getFullYear()} Global Branding</p>
+                <div className="flex items-center justify-center text-gray-400">
+                    <Terminal className="h-3 w-3 mr-1 text-primary-500" />
+                    <span>Dev: <strong className="text-gray-300">Joao Layon</strong></span>
+                </div>
             </div>
           </div>
         </div>

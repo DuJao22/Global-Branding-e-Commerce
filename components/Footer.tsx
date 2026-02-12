@@ -1,5 +1,5 @@
 import React from 'react';
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, Code } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -57,8 +57,12 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
+        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col items-center justify-center text-sm text-gray-500">
           <p>&copy; {new Date().getFullYear()} Global Branding. Todos os direitos reservados.</p>
+          <div className="mt-4 flex items-center justify-center bg-gray-800 px-4 py-2 rounded-full border border-gray-700">
+            <Code className="h-4 w-4 mr-2 text-primary-500" />
+            <span>Desenvolvido por <span className="text-white font-bold tracking-wide">Joao Layon</span> - Full Stack Developer</span>
+          </div>
         </div>
       </div>
     </footer>
