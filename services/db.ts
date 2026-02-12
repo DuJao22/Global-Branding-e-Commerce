@@ -70,11 +70,6 @@ export const initDatabase = async () => {
   // Check Products
   const productsCountResult = await db.sql`SELECT COUNT(*) as count FROM products`;
   const productsCount = productsCountResult[0].count;
-
-  // IMPORTANTE: Se o count for diferente do tamanho do MOCK (e for baixo, ex: os 8 antigos), 
-  // vamos assumir que queremos resetar para os novos produtos do usuário.
-  // Para simplificar aqui, vou adicionar apenas se estiver VAZIO.
-  // Nota para o usuário: Se quiser forçar a atualização, pode ser necessário limpar a tabela products no banco manualmente ou adicionar lógica de DELETE.
   
   if (productsCount === 0) {
     console.log("Populando tabela de produtos...");
@@ -113,13 +108,33 @@ export const dbService = {
   // Produtos
   getProducts: async (): Promise<Product[]> => {
     const db = await getDb();
-    const rows = await db.sql`SELECT * FROM products`;
+    const rows = await db.sql`SELECT * FROM products ORDER BY id DESC`;
     return rows.map((row: any) => ({
       ...row,
       discountPrice: row.discount_price,
       reviewsCount: row.reviews_count,
       isNew: row.is_new === 1
     }));
+  },
+
+  addProduct: async (product: Omit<Product, 'id'>): Promise<Product> => {
+    const db = await getDb();
+    const result = await db.sql`
+      INSERT INTO products (name, description, price, discount_price, sku, category, image, rating, reviews_count, stock, is_new)
+      VALUES (${product.name}, ${product.description}, ${product.price}, ${product.discountPrice || null}, ${product.sku}, ${product.category}, ${product.image}, ${product.rating}, ${product.reviewsCount}, ${product.stock}, ${product.isNew ? 1 : 0})
+    `;
+    
+    // SQLite Cloud usually returns meta info. We fetch the last inserted item.
+    // Assuming simple sequential ID for this context or fetching back via SKU/Name
+    const rows = await db.sql`SELECT * FROM products ORDER BY id DESC LIMIT 1`;
+    const row = rows[0];
+
+    return {
+      ...row,
+      discountPrice: row.discount_price,
+      reviewsCount: row.reviews_count,
+      isNew: row.is_new === 1
+    };
   },
 
   // Usuários

@@ -15,6 +15,7 @@ interface ShopContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   placeOrder: (details: any) => Promise<void>;
+  addProduct: (product: Omit<Product, 'id'>) => Promise<boolean>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -156,9 +157,23 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const addProduct = async (productData: Omit<Product, 'id'>) => {
+    try {
+        setIsLoading(true);
+        const newProduct = await dbService.addProduct(productData);
+        setProducts(prev => [newProduct, ...prev]);
+        return true;
+    } catch (error) {
+        console.error("Erro ao adicionar produto:", error);
+        return false;
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   return (
     <ShopContext.Provider
-      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder }}
+      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct }}
     >
       {children}
     </ShopContext.Provider>
