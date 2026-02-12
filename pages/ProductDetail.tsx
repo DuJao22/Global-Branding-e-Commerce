@@ -16,17 +16,17 @@ export const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             
             {/* Image Gallery Mock */}
             <div className="p-6 md:p-8 bg-white">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4">
+                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4 border border-gray-100">
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                 </div>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-2 sm:gap-4">
                     {[1,2,3,4].map(i => (
                         <div key={i} className={`aspect-square rounded-md overflow-hidden bg-gray-50 cursor-pointer border-2 ${i===1 ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}>
                             <img src={product.image} alt="Thumbnail" className="w-full h-full object-cover opacity-80 hover:opacity-100" />
@@ -40,7 +40,7 @@ export const ProductDetail: React.FC = () => {
                 <div className="flex justify-between items-start">
                     <div>
                         <span className="text-sm font-medium text-primary-600">{product.category}</span>
-                        <h1 className="text-3xl font-bold text-gray-900 mt-1 mb-2">{product.name}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 mb-2">{product.name}</h1>
                         <div className="flex items-center space-x-2 mb-4">
                             <div className="flex text-yellow-400">
                                 {[...Array(5)].map((_, i) => (
@@ -72,22 +72,22 @@ export const ProductDetail: React.FC = () => {
                     )}
                 </div>
 
-                <p className="text-gray-600 mb-8 leading-relaxed">{product.description}</p>
+                <p className="text-gray-600 mb-8 leading-relaxed text-sm sm:text-base">{product.description}</p>
 
                 {/* SKU & Stock */}
-                <div className="flex space-x-8 text-sm text-gray-500 mb-8">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-8 text-sm text-gray-500 mb-8">
                     <span>SKU: <span className="text-gray-900">{product.sku}</span></span>
                     <span>Disponibilidade: <span className={product.stock > 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>{product.stock > 0 ? "Em Estoque" : "Esgotado"}</span></span>
                 </div>
 
                 <div className="border-t border-gray-100 pt-8">
                     <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                        <div className="flex items-center border border-gray-300 rounded-md w-32">
-                            <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-gray-600 hover:bg-gray-100">
+                        <div className="flex items-center border border-gray-300 rounded-md w-full sm:w-32">
+                            <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-3 text-gray-600 hover:bg-gray-100 w-10 flex justify-center">
                                 <Minus className="h-4 w-4" />
                             </button>
-                            <input type="text" value={qty} readOnly className="w-full text-center border-none focus:ring-0" />
-                            <button onClick={() => setQty(qty + 1)} className="px-3 py-2 text-gray-600 hover:bg-gray-100">
+                            <input type="text" value={qty} readOnly className="w-full text-center border-none focus:ring-0 bg-transparent" />
+                            <button onClick={() => setQty(qty + 1)} className="px-3 py-3 text-gray-600 hover:bg-gray-100 w-10 flex justify-center">
                                 <Plus className="h-4 w-4" />
                             </button>
                         </div>
@@ -99,7 +99,7 @@ export const ProductDetail: React.FC = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex items-center text-sm text-gray-500">
                             <Truck className="h-5 w-5 text-gray-400 mr-2" /> Frete grátis acima de R$ 300
                         </div>
@@ -113,23 +113,23 @@ export const ProductDetail: React.FC = () => {
 
           {/* Tabs Description/Reviews */}
           <div className="border-t border-gray-100">
-             <div className="flex border-b border-gray-100">
+             <div className="flex border-b border-gray-100 overflow-x-auto">
                  <button 
                     onClick={() => setActiveTab('desc')}
-                    className={`px-8 py-4 text-sm font-medium border-b-2 ${activeTab === 'desc' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`px-6 sm:px-8 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${activeTab === 'desc' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                  >
                     Descrição
                  </button>
                  <button 
                     onClick={() => setActiveTab('reviews')}
-                    className={`px-8 py-4 text-sm font-medium border-b-2 ${activeTab === 'reviews' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`px-6 sm:px-8 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${activeTab === 'reviews' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                  >
                     Avaliações ({product.reviewsCount})
                  </button>
              </div>
-             <div className="p-8 bg-gray-50/50">
+             <div className="p-6 sm:p-8 bg-gray-50/50">
                  {activeTab === 'desc' ? (
-                     <div className="prose max-w-none text-gray-600">
+                     <div className="prose max-w-none text-gray-600 text-sm sm:text-base">
                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                          <p className="mt-4">Características:</p>
                          <ul className="list-disc pl-5 mt-2 space-y-1">

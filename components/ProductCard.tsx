@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="p-4 flex flex-col flex-grow">
         <div className="text-xs text-gray-500 mb-1">{product.category}</div>
         <Link to={`/product/${product.id}`} className="block">
-            <h3 className="text-gray-900 font-semibold text-lg mb-1 truncate hover:text-primary-600 transition-colors">{product.name}</h3>
+            <h3 className="text-gray-900 font-semibold text-lg mb-1 line-clamp-2 hover:text-primary-600 transition-colors" title={product.name}>{product.name}</h3>
         </Link>
         
         <div className="flex items-center mb-2">

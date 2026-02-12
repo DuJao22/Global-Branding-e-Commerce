@@ -85,7 +85,7 @@ export const Checkout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Progress Steps */}
@@ -95,21 +95,21 @@ export const Checkout: React.FC = () => {
                     <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${step >= 1 ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}`}>
                         {step > 1 ? <Check className="h-5 w-5" /> : 1}
                     </div>
-                    <span className="ml-2 font-medium">Entrega</span>
+                    <span className="ml-2 font-medium hidden sm:inline">Entrega</span>
                 </div>
-                <div className={`w-12 sm:w-24 h-1 mx-2 sm:mx-4 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
+                <div className={`w-8 sm:w-24 h-1 mx-2 sm:mx-4 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
                 <div className={`flex items-center ${step >= 2 ? 'text-primary-600' : 'text-gray-400'}`}>
                     <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${step >= 2 ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}`}>
                         {step > 2 ? <Check className="h-5 w-5" /> : 2}
                     </div>
-                    <span className="ml-2 font-medium">Pagamento</span>
+                    <span className="ml-2 font-medium hidden sm:inline">Pagamento</span>
                 </div>
-                <div className={`w-12 sm:w-24 h-1 mx-2 sm:mx-4 ${step >= 3 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
+                <div className={`w-8 sm:w-24 h-1 mx-2 sm:mx-4 ${step >= 3 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
                 <div className={`flex items-center ${step >= 3 ? 'text-primary-600' : 'text-gray-400'}`}>
                     <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${step >= 3 ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}`}>
                         3
                     </div>
-                    <span className="ml-2 font-medium">Revisão</span>
+                    <span className="ml-2 font-medium hidden sm:inline">Revisão</span>
                 </div>
             </div>
         </div>
@@ -117,13 +117,13 @@ export const Checkout: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Form Area */}
             <div className="lg:col-span-2">
-                <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
+                <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-5 sm:p-8">
                     {step === 1 && (
                         <div className="animate-fade-in">
                             <h2 className="text-xl font-bold mb-6 flex items-center"><MapPin className="mr-2" /> Como deseja receber?</h2>
                             
                             {/* Delivery Toggle */}
-                            <div className="grid grid-cols-2 gap-4 mb-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                                 <button
                                     type="button"
                                     onClick={() => setDeliveryMethod('delivery')}
