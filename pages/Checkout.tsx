@@ -30,6 +30,10 @@ export const Checkout: React.FC = () => {
   const shippingCost = deliveryMethod === 'pickup' ? 0 : (subtotal > 300 ? 0 : 35);
   const total = subtotal + shippingCost;
 
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
   // Busca CEP
   const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
     const cep = e.target.value.replace(/\D/g, '');
@@ -339,7 +343,7 @@ export const Checkout: React.FC = () => {
                                     {cart.map(item => (
                                         <div key={item.id} className="flex justify-between text-sm py-1">
                                             <span>{item.name} <span className="text-gray-500">x{item.quantity}</span></span>
-                                            <span className="font-medium">R$ {((item.discountPrice || item.price) * item.quantity).toFixed(2)}</span>
+                                            <span className="font-medium">{formatPrice((item.discountPrice || item.price) * item.quantity)}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -347,19 +351,19 @@ export const Checkout: React.FC = () => {
                                 <div className="py-2 border-b border-gray-100">
                                     <div className="flex justify-between text-gray-600 mb-1">
                                         <span>Subtotal</span>
-                                        <span>R$ {subtotal.toFixed(2)}</span>
+                                        <span>{formatPrice(subtotal)}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
                                         <span>Frete ({deliveryMethod === 'pickup' ? 'Retirada' : 'Entrega'})</span>
                                         <span className={shippingCost === 0 ? "text-green-600 font-medium" : ""}>
-                                            {shippingCost === 0 ? 'Grátis' : `R$ ${shippingCost.toFixed(2)}`}
+                                            {shippingCost === 0 ? 'Grátis' : formatPrice(shippingCost)}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="flex justify-between font-bold text-xl pt-2">
                                     <span>Total a Pagar</span>
-                                    <span className="text-primary-600">R$ {total.toFixed(2)}</span>
+                                    <span className="text-primary-600">{formatPrice(total)}</span>
                                 </div>
                                 
                                 <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm space-y-2">
@@ -413,17 +417,17 @@ export const Checkout: React.FC = () => {
                     <div className="space-y-3 text-sm text-gray-300">
                         <div className="flex justify-between">
                             <span>Subtotal</span>
-                            <span>R$ {subtotal.toFixed(2)}</span>
+                            <span>{formatPrice(subtotal)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Frete</span>
                             <span className={shippingCost === 0 ? "text-green-400 font-bold" : ""}>
-                                {shippingCost === 0 ? 'Grátis' : `R$ ${shippingCost.toFixed(2)}`}
+                                {shippingCost === 0 ? 'Grátis' : formatPrice(shippingCost)}
                             </span>
                         </div>
                         <div className="border-t border-gray-700 pt-3 flex justify-between font-bold text-white text-base">
                             <span>Total</span>
-                            <span>R$ {total.toFixed(2)}</span>
+                            <span>{formatPrice(total)}</span>
                         </div>
                     </div>
                     <div className="mt-6 flex items-center justify-center text-xs text-gray-500">

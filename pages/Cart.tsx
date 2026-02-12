@@ -10,6 +10,10 @@ export const Cart: React.FC = () => {
   const shipping = subtotal > 300 ? 0 : 35.00;
   const total = subtotal + shipping;
 
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -57,7 +61,7 @@ export const Cart: React.FC = () => {
                                 </div>
 
                                 <div className="text-right min-w-[120px]">
-                                    <p className="text-lg font-bold text-gray-900">R$ {((item.discountPrice || item.price) * item.quantity).toFixed(2)}</p>
+                                    <p className="text-lg font-bold text-gray-900">{formatPrice((item.discountPrice || item.price) * item.quantity)}</p>
                                     <button 
                                         onClick={() => removeFromCart(item.id)} 
                                         className="text-red-500 text-sm hover:text-red-700 mt-1 inline-flex items-center"
@@ -84,15 +88,15 @@ export const Cart: React.FC = () => {
                     <div className="space-y-4 mb-6">
                         <div className="flex justify-between text-gray-600">
                             <span>Subtotal</span>
-                            <span>R$ {subtotal.toFixed(2)}</span>
+                            <span>{formatPrice(subtotal)}</span>
                         </div>
                         <div className="flex justify-between text-gray-600">
                             <span>Frete</span>
-                            <span>{shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}</span>
+                            <span>{shipping === 0 ? 'Grátis' : formatPrice(shipping)}</span>
                         </div>
                         <div className="border-t border-gray-200 pt-4 flex justify-between font-bold text-xl text-gray-900">
                             <span>Total</span>
-                            <span>R$ {total.toFixed(2)}</span>
+                            <span>{formatPrice(total)}</span>
                         </div>
                     </div>
 

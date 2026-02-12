@@ -11,6 +11,10 @@ export const ProductDetail: React.FC = () => {
 
   const product = products.find(p => p.id === Number(id));
 
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
   if (!product) {
     return <div className="p-12 text-center text-gray-500">Produto não encontrado.</div>;
   }
@@ -63,12 +67,12 @@ export const ProductDetail: React.FC = () => {
                 <div className="mb-6">
                     {product.discountPrice ? (
                         <div className="flex items-baseline space-x-3">
-                            <span className="text-3xl font-bold text-gray-900">R$ {product.discountPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                            <span className="text-lg text-gray-500 line-through">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                            <span className="text-3xl font-bold text-gray-900">{formatPrice(product.discountPrice)}</span>
+                            <span className="text-lg text-gray-500 line-through">{formatPrice(product.price)}</span>
                             <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">-{Math.round((1 - product.discountPrice/product.price)*100)}%</span>
                         </div>
                     ) : (
-                        <span className="text-3xl font-bold text-gray-900">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                        <span className="text-3xl font-bold text-gray-900">{formatPrice(product.price)}</span>
                     )}
                 </div>
 

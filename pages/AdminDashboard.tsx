@@ -44,6 +44,23 @@ export const AdminDashboard: React.FC = () => {
   const totalSales = 75420; 
   const totalOrders = orders.length + 42; 
 
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    // Verifica se a data é válida
+    if (isNaN(date.getTime())) return dateString;
+    return date.toLocaleString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProduct.name || !newProduct.price) return;
@@ -136,7 +153,7 @@ export const AdminDashboard: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 font-medium">Receita Total</p>
-                            <p className="text-2xl font-bold text-gray-900">R$ {totalSales.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-gray-900">{formatPrice(totalSales)}</p>
                         </div>
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-sm flex items-center">
@@ -385,7 +402,7 @@ export const AdminDashboard: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-900">
-                                            R$ {product.price.toFixed(2)}
+                                            {formatPrice(product.price)}
                                         </td>
                                         <td className="px-6 py-4 text-sm">
                                             <span className={`${product.stock > 0 ? 'text-green-600' : 'text-red-600 font-bold'}`}>
@@ -419,7 +436,7 @@ export const AdminDashboard: React.FC = () => {
                                 <tr>
                                     <th className="px-6 py-3 font-medium">ID Pedido</th>
                                     <th className="px-6 py-3 font-medium">Cliente</th>
-                                    <th className="px-6 py-3 font-medium">Data</th>
+                                    <th className="px-6 py-3 font-medium">Data/Hora</th>
                                     <th className="px-6 py-3 font-medium">Total</th>
                                     <th className="px-6 py-3 font-medium">Itens</th>
                                     <th className="px-6 py-3 font-medium">Status Atual</th>
@@ -441,10 +458,10 @@ export const AdminDashboard: React.FC = () => {
                                             {order.customerName || `Usuário #${order.id.slice(-4)}`}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            {order.date}
+                                            {formatDate(order.date)}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                                            R$ {order.total.toFixed(2)}
+                                            {formatPrice(order.total)}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
                                             {order.items.length} itens
@@ -532,11 +549,11 @@ export const AdminDashboard: React.FC = () => {
                             </div>
                             <div className="space-y-2">
                                 <p className="text-sm text-gray-500 flex items-center"><Calendar className="h-3 w-3 mr-1" /> Data</p>
-                                <p className="font-medium text-gray-900">{new Date(selectedOrder.date).toLocaleDateString('pt-BR')}</p>
+                                <p className="font-medium text-gray-900">{formatDate(selectedOrder.date)}</p>
                             </div>
                             <div className="space-y-2">
                                 <p className="text-sm text-gray-500 flex items-center"><DollarSign className="h-3 w-3 mr-1" /> Total</p>
-                                <p className="font-bold text-lg text-primary-600">R$ {selectedOrder.total.toFixed(2)}</p>
+                                <p className="font-bold text-lg text-primary-600">{formatPrice(selectedOrder.total)}</p>
                             </div>
                             <div className="space-y-2">
                                 <p className="text-sm text-gray-500">Status Atual</p>
@@ -577,10 +594,10 @@ export const AdminDashboard: React.FC = () => {
                                                 {item.quantity}
                                             </td>
                                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                R$ {(item.discountPrice || item.price).toFixed(2)}
+                                                {formatPrice(item.discountPrice || item.price)}
                                             </td>
                                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
-                                                R$ {((item.discountPrice || item.price) * item.quantity).toFixed(2)}
+                                                {formatPrice((item.discountPrice || item.price) * item.quantity)}
                                             </td>
                                         </tr>
                                     ))}

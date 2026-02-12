@@ -159,7 +159,8 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const newOrder: Order = {
       id: `PED-${Math.floor(Math.random() * 10000)}`,
-      date: new Date().toISOString().split('T')[0],
+      // CRITICAL CHANGE: Use full ISO string to include time for correct sorting
+      date: new Date().toISOString(), 
       total: cart.reduce((sum, item) => sum + (item.discountPrice || item.price) * item.quantity, 0),
       status: 'Paid',
       items: [...cart]
@@ -167,6 +168,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
         await dbService.createOrder(newOrder, user.id);
+        // Add new order to start of list (Newest first)
         setOrders(prev => [newOrder, ...prev]);
         clearCart();
         alert("Pagamento realizado com sucesso! Pedido confirmado e salvo no banco de dados.");

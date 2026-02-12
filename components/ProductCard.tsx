@@ -11,6 +11,10 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useShop();
 
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
   return (
     <div className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
       <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -59,11 +63,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className="flex flex-col">
                 {product.discountPrice ? (
                     <>
-                        <span className="text-xs text-gray-400 line-through">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                        <span className="text-lg font-bold text-gray-900">R$ {product.discountPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                        <span className="text-xs text-gray-400 line-through">{formatPrice(product.price)}</span>
+                        <span className="text-lg font-bold text-gray-900">{formatPrice(product.discountPrice)}</span>
                     </>
                 ) : (
-                    <span className="text-lg font-bold text-gray-900">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    <span className="text-lg font-bold text-gray-900">{formatPrice(product.price)}</span>
                 )}
             </div>
         </div>
