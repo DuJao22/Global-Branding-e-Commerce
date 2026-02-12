@@ -13,32 +13,37 @@ export const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gray-900 text-white overflow-hidden">
-        <div className="absolute inset-0">
+      {/* Hero Section - Premium Dark Theme */}
+      <section className="relative bg-gray-950 text-white overflow-hidden h-[600px] flex items-center">
+        <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
-            alt="Hero Background" 
-            className="w-full h-full object-cover opacity-30"
+            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" 
+            alt="Technology Background" 
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-900/60 to-transparent"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-2xl animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Descubra o Futuro das <span className="text-primary-400">Compras</span>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl animate-fade-in-up">
+            <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-sm font-semibold tracking-wide uppercase mb-6 backdrop-blur-sm">
+              Premium Collection 2024
+            </span>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+              Curadoria de <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Excelência</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 mb-8">
-              Explore nossa coleção selecionada de eletrônicos premium, moda e essenciais para casa. 
-              Qualidade em que você pode confiar, preços que você vai amar.
+            <p className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl">
+              Uma seleção exclusiva de tecnologia de ponta, moda sofisticada e design para sua casa. 
+              Elevamos o padrão da sua experiência de compra online.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/shop" className="inline-flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors">
-                Comprar Agora
+              <Link to="/shop" className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-bold rounded-lg text-gray-950 bg-white hover:bg-gray-100 transition-all transform hover:-translate-y-1 shadow-lg shadow-white/10">
+                Explorar Loja
               </Link>
-              <Link to="/shop?sort=newest" className="inline-flex justify-center items-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-white hover:bg-white hover:text-gray-900 transition-colors">
-                Novidades
+              <Link to="/shop?sort=newest" className="inline-flex justify-center items-center px-8 py-4 border border-gray-700 text-base font-bold rounded-lg text-white hover:bg-gray-800 transition-all">
+                Ver Lançamentos
               </Link>
             </div>
           </div>
@@ -46,35 +51,43 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-12 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-12 bg-white border-b border-gray-100 relative z-20 -mt-8 mx-4 sm:mx-8 rounded-xl shadow-xl">
+        <div className="max-w-7xl mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="flex items-center space-x-4 p-4 rounded-lg bg-gray-50">
-                    <Truck className="h-10 w-10 text-primary-500" />
+                <div className="flex items-center space-x-4 p-4">
+                    <div className="p-3 bg-primary-50 rounded-full text-primary-600">
+                      <Truck className="h-6 w-6" />
+                    </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Frete Grátis</h3>
-                        <p className="text-sm text-gray-500">Em pedidos acima de R$ 300</p>
+                        <h3 className="font-bold text-gray-900">Frete Grátis</h3>
+                        <p className="text-sm text-gray-500">Acima de R$ 300</p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-4 p-4 rounded-lg bg-gray-50">
-                    <ShieldCheck className="h-10 w-10 text-primary-500" />
+                <div className="flex items-center space-x-4 p-4">
+                    <div className="p-3 bg-primary-50 rounded-full text-primary-600">
+                      <ShieldCheck className="h-6 w-6" />
+                    </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Pagamento Seguro</h3>
-                        <p className="text-sm text-gray-500">Checkout 100% seguro</p>
+                        <h3 className="font-bold text-gray-900">Garantia Total</h3>
+                        <p className="text-sm text-gray-500">Compra 100% Segura</p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-4 p-4 rounded-lg bg-gray-50">
-                    <RefreshCw className="h-10 w-10 text-primary-500" />
+                <div className="flex items-center space-x-4 p-4">
+                    <div className="p-3 bg-primary-50 rounded-full text-primary-600">
+                      <RefreshCw className="h-6 w-6" />
+                    </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Devolução Fácil</h3>
-                        <p className="text-sm text-gray-500">Política de devolução de 30 dias</p>
+                        <h3 className="font-bold text-gray-900">Troca Fácil</h3>
+                        <p className="text-sm text-gray-500">30 dias para devolução</p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-4 p-4 rounded-lg bg-gray-50">
-                    <CreditCard className="h-10 w-10 text-primary-500" />
+                <div className="flex items-center space-x-4 p-4">
+                    <div className="p-3 bg-primary-50 rounded-full text-primary-600">
+                      <CreditCard className="h-6 w-6" />
+                    </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Pagamento Flexível</h3>
-                        <p className="text-sm text-gray-500">Pague com Cartão ou Pix</p>
+                        <h3 className="font-bold text-gray-900">Até 12x Sem Juros</h3>
+                        <p className="text-sm text-gray-500">Cartão ou PIX</p>
                     </div>
                 </div>
             </div>
@@ -82,25 +95,32 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Categories */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Categorias</h2>
-            <Link to="/shop" className="text-primary-600 hover:text-primary-700 font-medium flex items-center">
-              Ver Tudo <ArrowRight className="ml-1 h-4 w-4" />
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">Nossas Coleções</h2>
+              <div className="h-1 w-20 bg-primary-600 mt-2 rounded-full"></div>
+            </div>
+            <Link to="/shop" className="text-primary-600 hover:text-primary-700 font-medium flex items-center transition-colors">
+              Ver Tudo <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {CATEGORIES.map((cat, idx) => (
-              <Link key={idx} to={`/shop?category=${cat}`} className="group relative rounded-lg overflow-hidden aspect-[4/3] shadow-sm hover:shadow-md transition-shadow">
+              <Link key={idx} to={`/shop?category=${cat}`} className="group relative rounded-xl overflow-hidden aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                  <img 
-                    src={`https://picsum.photos/400/300?random=${100+idx}`} 
+                    src={`https://picsum.photos/400/600?random=${100+idx}`} 
                     alt={cat}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                  />
-                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
-                    <span className="text-white font-semibold text-lg text-center px-2">{cat}</span>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity group-hover:opacity-90"></div>
+                 <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <span className="text-white font-bold text-lg block mb-1">{cat}</span>
+                    <span className="text-gray-300 text-xs uppercase tracking-wider flex items-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                      Explorar <ArrowRight className="h-3 w-3 ml-1" />
+                    </span>
                  </div>
               </Link>
             ))}
@@ -109,9 +129,9 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Mais Vendidos</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Os Mais Desejados</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
@@ -121,31 +141,38 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Promo Banner */}
-      <section className="py-16 bg-primary-600">
+      <section className="py-20 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-primary-100 rounded-full opacity-50"></div>
+            <div className="bg-gradient-to-r from-primary-900 to-gray-900 rounded-3xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden border border-gray-800">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
                 
-                <div className="relative z-10 mb-8 md:mb-0 max-w-lg">
-                    <span className="text-primary-600 font-bold tracking-wider uppercase text-sm">Oferta por Tempo Limitado</span>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Ganhe 20% OFF no Primeiro Pedido</h2>
-                    <p className="text-gray-600 mb-6">Assine nossa newsletter e receba um cupom especial instantaneamente. Não perca ofertas premium.</p>
-                    <div className="flex w-full max-w-sm">
-                        <input type="email" placeholder="Digite seu e-mail" className="flex-1 px-4 py-3 rounded-l-md border border-r-0 border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500" />
-                        <button className="bg-gray-900 text-white px-6 py-3 rounded-r-md font-medium hover:bg-gray-800 transition-colors">Assinar</button>
+                <div className="relative z-10 mb-8 md:mb-0 max-w-xl">
+                    <span className="text-primary-400 font-bold tracking-widest uppercase text-xs mb-2 block">Oferta Exclusiva</span>
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Ganhe 20% OFF na Primeira Compra</h2>
+                    <p className="text-gray-400 mb-8 text-lg">Cadastre-se na nossa newsletter e receba acesso antecipado a lançamentos e ofertas premium.</p>
+                    <div className="flex w-full max-w-md bg-white/5 p-1 rounded-lg border border-gray-700 backdrop-blur-sm">
+                        <input type="email" placeholder="Seu melhor e-mail" className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none" />
+                        <button className="bg-white text-gray-900 px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition-colors">
+                          Entrar
+                        </button>
                     </div>
                 </div>
-                <div className="relative z-10">
-                    <img src="https://picsum.photos/400/400?random=50" alt="Promo" className="rounded-lg shadow-lg rotate-3 hover:rotate-0 transition-transform duration-500 w-64 h-64 object-cover" />
+                <div className="relative z-10 hidden md:block">
+                    {/* Abstract Decorative Element */}
+                    <div className="w-64 h-64 bg-gradient-to-tr from-primary-500 to-purple-500 rounded-full blur-[80px] opacity-30 animate-pulse"></div>
+                    <img src="https://i.postimg.cc/KjSnyJWC/unnamed-1-removebg-preview.png" alt="Emblem" className="relative w-48 h-auto opacity-80 grayscale brightness-200" />
                 </div>
             </div>
         </div>
       </section>
 
        {/* New Arrivals */}
-       <section className="py-16 bg-white">
+       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Novidades</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">Chegaram Agora</h2>
+            <p className="text-gray-500 mt-2">Confira as últimas adições ao nosso catálogo</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {newProducts.map(product => (
               <ProductCard key={product.id} product={product} />
