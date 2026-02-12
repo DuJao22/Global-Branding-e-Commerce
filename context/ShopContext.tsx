@@ -17,6 +17,7 @@ interface ShopContextType {
   placeOrder: (details: any) => Promise<void>;
   addProduct: (product: Omit<Product, 'id'>) => Promise<boolean>;
   updateOrderStatus: (orderId: string, newStatus: Order['status']) => Promise<void>;
+  updateUserProfile: (name: string, whatsapp: string) => Promise<boolean>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -133,6 +134,23 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('gb_user');
   };
 
+  const updateUserProfile = async (name: string, whatsapp: string) => {
+    if (!user) return false;
+    try {
+        const success = await dbService.updateUserProfile(user.id, name, whatsapp);
+        if (success) {
+            const updatedUser = { ...user, name, whatsapp };
+            setUser(updatedUser);
+            localStorage.setItem('gb_user', JSON.stringify(updatedUser));
+            return true;
+        }
+        return false;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+  };
+
   const placeOrder = async (details: any) => {
     if (!user) {
         alert("Você precisa estar logado para finalizar a compra.");
@@ -184,7 +202,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <ShopContext.Provider
-      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct, updateOrderStatus }}
+      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct, updateOrderStatus, updateUserProfile }}
     >
       {children}
     </ShopContext.Provider>

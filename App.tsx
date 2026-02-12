@@ -11,6 +11,7 @@ import { Checkout } from './pages/Checkout';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Login } from './pages/Login';
 import { Orders } from './pages/Orders';
+import { Profile } from './pages/Profile';
 
 const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -43,7 +44,7 @@ const App: React.FC = () => {
           <Route path="/checkout" element={<Layout hideFooter><Checkout /></Layout>} />
           <Route path="/login" element={<Layout hideFooter><Login /></Layout>} />
           <Route path="/admin" element={<Layout hideFooter><AdminDashboard /></Layout>} />
-          <Route path="/profile" element={<Layout><div className="p-20 text-center text-xl">User Profile Placeholder</div></Layout>} />
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
           <Route path="/orders" element={<Layout><Orders /></Layout>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

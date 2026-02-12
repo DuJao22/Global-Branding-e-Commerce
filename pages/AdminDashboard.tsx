@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { Navigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, Tag, LayoutGrid, List, Truck, CheckCircle, Clock } from 'lucide-react';
+import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, LayoutGrid, List, Eye, X, ChevronRight, Calendar, CreditCard } from 'lucide-react';
 import { CATEGORIES } from '../constants';
+import { Order } from '../types';
 
 const data = [
   { name: 'Jan', sales: 4000 },
@@ -19,6 +20,9 @@ export const AdminDashboard: React.FC = () => {
   const { user, products, orders, addProduct, updateOrderStatus } = useShop();
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders'>('overview');
   
+  // States para Modal de Pedidos
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
   // Form State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -96,7 +100,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8 relative">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4 md:mb-0">Painel Administrativo</h1>
@@ -424,9 +428,14 @@ export const AdminDashboard: React.FC = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {orders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50">
+                                    <tr key={order.id} className="hover:bg-gray-50 group">
                                         <td className="px-6 py-4 font-mono text-xs text-gray-500">
-                                            {order.id}
+                                            <button 
+                                                onClick={() => setSelectedOrder(order)}
+                                                className="text-primary-600 font-bold hover:underline"
+                                            >
+                                                {order.id}
+                                            </button>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                             {order.customerName || `Usuário #${order.id.slice(-4)}`}
@@ -446,18 +455,27 @@ export const AdminDashboard: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <select 
-                                                value={order.status}
-                                                onChange={(e) => updateOrderStatus(order.id, e.target.value as any)}
-                                                className="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 p-1 bg-white border"
-                                            >
-                                                <option value="Pending">Pendente</option>
-                                                <option value="Paid">Pagamento Recebido</option>
-                                                <option value="Processing">Separando Pedido</option>
-                                                <option value="Shipped">Enviado</option>
-                                                <option value="Delivered">Entregue</option>
-                                                <option value="Cancelled">Cancelado</option>
-                                            </select>
+                                            <div className="flex items-center space-x-2">
+                                                <button 
+                                                    onClick={() => setSelectedOrder(order)}
+                                                    className="p-2 bg-gray-100 rounded-md text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                                                    title="Ver Detalhes"
+                                                >
+                                                    <Eye className="h-4 w-4" />
+                                                </button>
+                                                <select 
+                                                    value={order.status}
+                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value as any)}
+                                                    className="block w-full max-w-[140px] text-sm border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 p-1.5 bg-white border"
+                                                >
+                                                    <option value="Pending">Pendente</option>
+                                                    <option value="Paid">Pagamento Recebido</option>
+                                                    <option value="Processing">Separando Pedido</option>
+                                                    <option value="Shipped">Enviado</option>
+                                                    <option value="Delivered">Entregue</option>
+                                                    <option value="Cancelled">Cancelado</option>
+                                                </select>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -475,6 +493,116 @@ export const AdminDashboard: React.FC = () => {
              </div>
         )}
       </div>
+
+      {/* Modal de Detalhes do Pedido */}
+      {selectedOrder && (
+          <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                {/* Background overlay */}
+                <div 
+                    className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" 
+                    aria-hidden="true"
+                    onClick={() => setSelectedOrder(null)}
+                ></div>
+
+                {/* Modal Panel */}
+                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
+                    
+                    {/* Header */}
+                    <div className="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center" id="modal-title">
+                            <ShoppingBag className="h-5 w-5 mr-2 text-primary-600" /> Detalhes do Pedido <span className="ml-2 font-mono text-gray-500 text-sm">#{selectedOrder.id}</span>
+                        </h3>
+                        <button 
+                            type="button" 
+                            className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                            onClick={() => setSelectedOrder(null)}
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-500">Cliente</p>
+                                <p className="font-medium text-gray-900">{selectedOrder.customerName || 'Cliente'}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-500 flex items-center"><Calendar className="h-3 w-3 mr-1" /> Data</p>
+                                <p className="font-medium text-gray-900">{new Date(selectedOrder.date).toLocaleDateString('pt-BR')}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-500 flex items-center"><DollarSign className="h-3 w-3 mr-1" /> Total</p>
+                                <p className="font-bold text-lg text-primary-600">R$ {selectedOrder.total.toFixed(2)}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-sm text-gray-500">Status Atual</p>
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedOrder.status)}`}>
+                                    {getStatusLabel(selectedOrder.status)}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h4 className="font-medium text-gray-900 mb-3 flex items-center border-t border-gray-100 pt-4">
+                            <List className="h-4 w-4 mr-2" /> Itens do Pedido
+                        </h4>
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
+                                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qtd</th>
+                                        <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Preço Un.</th>
+                                        <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {selectedOrder.items.map((item, idx) => (
+                                        <tr key={idx}>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="flex-shrink-0 h-10 w-10">
+                                                        <img className="h-10 w-10 rounded object-cover" src={item.image} alt="" />
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-medium text-gray-900 truncate max-w-[150px]">{item.name}</div>
+                                                        <div className="text-xs text-gray-500">{item.sku}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                {item.quantity}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                R$ {(item.discountPrice || item.price).toFixed(2)}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                                                R$ {((item.discountPrice || item.price) * item.quantity).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button 
+                            type="button" 
+                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
+                            onClick={() => setSelectedOrder(null)}
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+          </div>
+      )}
     </div>
   );
 };

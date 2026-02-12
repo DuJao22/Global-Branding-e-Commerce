@@ -23,6 +23,7 @@ export interface User {
   email: string;
   role: 'customer' | 'admin';
   avatar?: string;
+  whatsapp?: string;
 }
 
 export interface Order {

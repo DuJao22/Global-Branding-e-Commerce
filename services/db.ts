@@ -22,7 +22,7 @@ export const getDb = async () => {
 export const initDatabase = async () => {
   const db = await getDb();
 
-  // 1. Tabela de Usuários
+  // 1. Tabela de Usuários (Updated schema definition for new installs)
   await db.sql`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,9 +30,17 @@ export const initDatabase = async () => {
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       role TEXT NOT NULL CHECK(role IN ('customer', 'admin')),
-      avatar TEXT
+      avatar TEXT,
+      whatsapp TEXT
     );
   `;
+
+  // MIGRATION: Tenta adicionar a coluna whatsapp se ela não existir (para bancos já criados)
+  try {
+    await db.sql`ALTER TABLE users ADD COLUMN whatsapp TEXT`;
+  } catch (e) {
+    // Coluna provavelmente já existe, ignora o erro
+  }
 
   // 2. Tabela de Produtos
   await db.sql`
@@ -124,8 +132,6 @@ export const dbService = {
       VALUES (${product.name}, ${product.description}, ${product.price}, ${product.discountPrice || null}, ${product.sku}, ${product.category}, ${product.image}, ${product.rating}, ${product.reviewsCount}, ${product.stock}, ${product.isNew ? 1 : 0})
     `;
     
-    // SQLite Cloud usually returns meta info. We fetch the last inserted item.
-    // Assuming simple sequential ID for this context or fetching back via SKU/Name
     const rows = await db.sql`SELECT * FROM products ORDER BY id DESC LIMIT 1`;
     const row = rows[0];
 
@@ -146,6 +152,17 @@ export const dbService = {
       return result[0] as User;
     }
     return null;
+  },
+
+  updateUserProfile: async (userId: number, name: string, whatsapp: string): Promise<boolean> => {
+    const db = await getDb();
+    try {
+        await db.sql`UPDATE users SET name = ${name}, whatsapp = ${whatsapp} WHERE id = ${userId}`;
+        return true;
+    } catch (e) {
+        console.error("Erro ao atualizar perfil", e);
+        return false;
+    }
   },
 
   register: async (name: string, email: string, password: string): Promise<User> => {
