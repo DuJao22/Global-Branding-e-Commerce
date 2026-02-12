@@ -29,8 +29,9 @@ export interface Order {
   id: string;
   date: string;
   total: number;
-  status: 'Pending' | 'Paid' | 'Shipped' | 'Delivered' | 'Cancelled';
+  status: 'Pending' | 'Paid' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
   items: CartItem[];
+  customerName?: string; // Optional field for Admin view
 }
 
 export type SortOption = 'price-asc' | 'price-desc' | 'popularity' | 'rating';

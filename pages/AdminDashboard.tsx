@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { Navigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, Tag, LayoutGrid, List } from 'lucide-react';
+import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, Tag, LayoutGrid, List, Truck, CheckCircle, Clock } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 
 const data = [
@@ -16,8 +16,8 @@ const data = [
 ];
 
 export const AdminDashboard: React.FC = () => {
-  const { user, products, orders, addProduct } = useShop();
-  const [activeTab, setActiveTab] = useState<'overview' | 'products'>('overview');
+  const { user, products, orders, addProduct, updateOrderStatus } = useShop();
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders'>('overview');
   
   // Form State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -72,6 +72,29 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const getStatusColor = (status: string) => {
+      switch(status) {
+          case 'Paid': return 'bg-green-100 text-green-800';
+          case 'Processing': return 'bg-blue-100 text-blue-800';
+          case 'Shipped': return 'bg-purple-100 text-purple-800';
+          case 'Delivered': return 'bg-gray-100 text-gray-800';
+          case 'Cancelled': return 'bg-red-100 text-red-800';
+          default: return 'bg-yellow-100 text-yellow-800';
+      }
+  };
+
+  const getStatusLabel = (status: string) => {
+      switch(status) {
+          case 'Pending': return 'Pendente';
+          case 'Paid': return 'Pagamento Recebido';
+          case 'Processing': return 'Separando Pedido';
+          case 'Shipped': return 'Enviado';
+          case 'Delivered': return 'Entregue';
+          case 'Cancelled': return 'Cancelado';
+          default: return status;
+      }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -90,10 +113,16 @@ export const AdminDashboard: React.FC = () => {
                 >
                     <List className="inline-block w-4 h-4 mr-2" /> Produtos
                 </button>
+                <button 
+                    onClick={() => setActiveTab('orders')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'orders' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                    <ShoppingBag className="inline-block w-4 h-4 mr-2" /> Pedidos
+                </button>
             </div>
         </div>
 
-        {activeTab === 'overview' ? (
+        {activeTab === 'overview' && (
             <div className="animate-fade-in">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -168,7 +197,9 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
-        ) : (
+        )}
+
+        {activeTab === 'products' && (
             <div className="animate-fade-in space-y-6">
                 {/* Product Management Header */}
                 <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm">
@@ -368,6 +399,80 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
+        )}
+
+        {activeTab === 'orders' && (
+             <div className="animate-fade-in space-y-6">
+                 <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">Gerenciamento de Pedidos</h2>
+                    <p className="text-gray-500 text-sm">Acompanhe e atualize o status dos pedidos dos clientes.</p>
+                 </div>
+
+                 <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                <tr>
+                                    <th className="px-6 py-3 font-medium">ID Pedido</th>
+                                    <th className="px-6 py-3 font-medium">Cliente</th>
+                                    <th className="px-6 py-3 font-medium">Data</th>
+                                    <th className="px-6 py-3 font-medium">Total</th>
+                                    <th className="px-6 py-3 font-medium">Itens</th>
+                                    <th className="px-6 py-3 font-medium">Status Atual</th>
+                                    <th className="px-6 py-3 font-medium">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {orders.map((order) => (
+                                    <tr key={order.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 font-mono text-xs text-gray-500">
+                                            {order.id}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                            {order.customerName || `Usuário #${order.id.slice(-4)}`}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {order.date}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                                            R$ {order.total.toFixed(2)}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {order.items.length} itens
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                                                {getStatusLabel(order.status)}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <select 
+                                                value={order.status}
+                                                onChange={(e) => updateOrderStatus(order.id, e.target.value as any)}
+                                                className="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 p-1 bg-white border"
+                                            >
+                                                <option value="Pending">Pendente</option>
+                                                <option value="Paid">Pagamento Recebido</option>
+                                                <option value="Processing">Separando Pedido</option>
+                                                <option value="Shipped">Enviado</option>
+                                                <option value="Delivered">Entregue</option>
+                                                <option value="Cancelled">Cancelado</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {orders.length === 0 && (
+                                    <tr>
+                                        <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                                            Nenhum pedido encontrado.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                 </div>
+             </div>
         )}
       </div>
     </div>

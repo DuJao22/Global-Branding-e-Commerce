@@ -172,6 +172,11 @@ export const dbService = {
     `;
   },
 
+  updateOrderStatus: async (orderId: string, newStatus: string) => {
+    const db = await getDb();
+    await db.sql`UPDATE orders SET status = ${newStatus} WHERE id = ${orderId}`;
+  },
+
   getOrdersByUser: async (userId: number): Promise<Order[]> => {
     const db = await getDb();
     const rows = await db.sql`SELECT * FROM orders WHERE user_id = ${userId} ORDER BY date DESC`;
@@ -187,13 +192,21 @@ export const dbService = {
 
   getAllOrders: async (): Promise<Order[]> => {
     const db = await getDb();
-    const rows = await db.sql`SELECT * FROM orders ORDER BY date DESC`;
+    // JOIN para pegar o nome do usuário
+    const rows = await db.sql`
+        SELECT orders.*, users.name as user_name 
+        FROM orders 
+        JOIN users ON orders.user_id = users.id 
+        ORDER BY orders.date DESC
+    `;
+    
     return rows.map((row: any) => ({
       id: row.id,
       date: row.date,
       total: row.total,
       status: row.status,
-      items: JSON.parse(row.items_json || '[]')
+      items: JSON.parse(row.items_json || '[]'),
+      customerName: row.user_name
     }));
   }
 };

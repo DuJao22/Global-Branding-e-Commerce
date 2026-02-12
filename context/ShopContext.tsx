@@ -16,6 +16,7 @@ interface ShopContextType {
   logout: () => void;
   placeOrder: (details: any) => Promise<void>;
   addProduct: (product: Omit<Product, 'id'>) => Promise<boolean>;
+  updateOrderStatus: (orderId: string, newStatus: Order['status']) => Promise<void>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -171,9 +172,19 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
+    try {
+        await dbService.updateOrderStatus(orderId, newStatus);
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    } catch (error) {
+        console.error("Erro ao atualizar status:", error);
+        alert("Erro ao atualizar status do pedido.");
+    }
+  };
+
   return (
     <ShopContext.Provider
-      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct }}
+      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct, updateOrderStatus }}
     >
       {children}
     </ShopContext.Provider>
