@@ -17,9 +17,9 @@ export const Home: React.FC = () => {
       <section className="relative bg-gray-950 text-white overflow-hidden h-[600px] flex items-center">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" 
-            alt="Technology Background" 
-            className="w-full h-full object-cover opacity-20"
+            src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=2070&auto=format&fit=crop" 
+            alt="Lifestyle Background" 
+            className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/80 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-900/60 to-transparent"></div>
@@ -28,22 +28,22 @@ export const Home: React.FC = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl animate-fade-in-up">
             <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-sm font-semibold tracking-wide uppercase mb-6 backdrop-blur-sm">
-              Premium Collection 2024
+              Global Branding Essentials
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-              Curadoria de <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Excelência</span>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
+              Tudo para seu Lar e <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Seu Estilo Pessoal</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl">
-              Uma seleção exclusiva de tecnologia de ponta, moda sofisticada e design para sua casa. 
-              Elevamos o padrão da sua experiência de compra online.
+              Do conforto das nossas redes e tapetes à precisão da cutelaria e tecnologia. 
+              Renove seu dia a dia com nossa seleção exclusiva de carteiras, moda íntima e acessórios premium.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/shop" className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-bold rounded-lg text-gray-950 bg-white hover:bg-gray-100 transition-all transform hover:-translate-y-1 shadow-lg shadow-white/10">
-                Explorar Loja
+                Ver Coleção
               </Link>
               <Link to="/shop?sort=newest" className="inline-flex justify-center items-center px-8 py-4 border border-gray-700 text-base font-bold rounded-lg text-white hover:bg-gray-800 transition-all">
-                Ver Lançamentos
+                Ofertas da Semana
               </Link>
             </div>
           </div>
@@ -60,7 +60,7 @@ export const Home: React.FC = () => {
                     </div>
                     <div>
                         <h3 className="font-bold text-gray-900">Frete Grátis</h3>
-                        <p className="text-sm text-gray-500">Acima de R$ 300</p>
+                        <p className="text-sm text-gray-500">Para todo o Brasil</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4">
@@ -68,8 +68,8 @@ export const Home: React.FC = () => {
                       <ShieldCheck className="h-6 w-6" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900">Garantia Total</h3>
-                        <p className="text-sm text-gray-500">Compra 100% Segura</p>
+                        <h3 className="font-bold text-gray-900">Qualidade Garantida</h3>
+                        <p className="text-sm text-gray-500">Materiais Premium</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4">
@@ -77,8 +77,8 @@ export const Home: React.FC = () => {
                       <RefreshCw className="h-6 w-6" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900">Troca Fácil</h3>
-                        <p className="text-sm text-gray-500">30 dias para devolução</p>
+                        <h3 className="font-bold text-gray-900">Troca Simplificada</h3>
+                        <p className="text-sm text-gray-500">Sem burocracia</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4">
@@ -86,8 +86,8 @@ export const Home: React.FC = () => {
                       <CreditCard className="h-6 w-6" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900">Até 12x Sem Juros</h3>
-                        <p className="text-sm text-gray-500">Cartão ou PIX</p>
+                        <h3 className="font-bold text-gray-900">Pagamento Seguro</h3>
+                        <p className="text-sm text-gray-500">Até 12x no cartão</p>
                     </div>
                 </div>
             </div>
@@ -99,7 +99,7 @@ export const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-10">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Nossas Coleções</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Nossas Categorias</h2>
               <div className="h-1 w-20 bg-primary-600 mt-2 rounded-full"></div>
             </div>
             <Link to="/shop" className="text-primary-600 hover:text-primary-700 font-medium flex items-center transition-colors">
@@ -111,15 +111,19 @@ export const Home: React.FC = () => {
             {CATEGORIES.map((cat, idx) => (
               <Link key={idx} to={`/shop?category=${cat}`} className="group relative rounded-xl overflow-hidden aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                  <img 
-                    src={`https://picsum.photos/400/600?random=${100+idx}`} 
+                    src={`https://source.unsplash.com/random/400x600?${cat.replace(' ', ',')},product`} 
                     alt={cat}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                        // Fallback image if unsplash fails
+                        (e.target as HTMLImageElement).src = `https://picsum.photos/400/600?random=${100+idx}`;
+                    }}
                  />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity group-hover:opacity-90"></div>
                  <div className="absolute bottom-0 left-0 right-0 p-6">
                     <span className="text-white font-bold text-lg block mb-1">{cat}</span>
                     <span className="text-gray-300 text-xs uppercase tracking-wider flex items-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                      Explorar <ArrowRight className="h-3 w-3 ml-1" />
+                      Ver Produtos <ArrowRight className="h-3 w-3 ml-1" />
                     </span>
                  </div>
               </Link>
@@ -131,7 +135,7 @@ export const Home: React.FC = () => {
       {/* Featured Products */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Os Mais Desejados</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Destaques da Loja</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
@@ -147,20 +151,18 @@ export const Home: React.FC = () => {
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
                 
                 <div className="relative z-10 mb-8 md:mb-0 max-w-xl">
-                    <span className="text-primary-400 font-bold tracking-widest uppercase text-xs mb-2 block">Oferta Exclusiva</span>
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Ganhe 20% OFF na Primeira Compra</h2>
-                    <p className="text-gray-400 mb-8 text-lg">Cadastre-se na nossa newsletter e receba acesso antecipado a lançamentos e ofertas premium.</p>
+                    <span className="text-primary-400 font-bold tracking-widest uppercase text-xs mb-2 block">Oferta Relâmpago</span>
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Kit Churrasco & Cutelaria</h2>
+                    <p className="text-gray-400 mb-8 text-lg">Leve sofisticação para sua área gourmet. Facas artesanais com 15% OFF na primeira compra.</p>
                     <div className="flex w-full max-w-md bg-white/5 p-1 rounded-lg border border-gray-700 backdrop-blur-sm">
-                        <input type="email" placeholder="Seu melhor e-mail" className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none" />
+                        <input type="email" placeholder="Seu e-mail" className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none" />
                         <button className="bg-white text-gray-900 px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition-colors">
-                          Entrar
+                          Eu Quero
                         </button>
                     </div>
                 </div>
                 <div className="relative z-10 hidden md:block">
-                    {/* Abstract Decorative Element */}
-                    <div className="w-64 h-64 bg-gradient-to-tr from-primary-500 to-purple-500 rounded-full blur-[80px] opacity-30 animate-pulse"></div>
-                    <img src="https://i.postimg.cc/KjSnyJWC/unnamed-1-removebg-preview.png" alt="Emblem" className="relative w-48 h-auto opacity-80 grayscale brightness-200" />
+                     <img src="https://i.postimg.cc/KjSnyJWC/unnamed-1-removebg-preview.png" alt="Emblem" className="relative w-48 h-auto opacity-80 grayscale brightness-200" />
                 </div>
             </div>
         </div>
@@ -170,8 +172,8 @@ export const Home: React.FC = () => {
        <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Chegaram Agora</h2>
-            <p className="text-gray-500 mt-2">Confira as últimas adições ao nosso catálogo</p>
+            <h2 className="text-3xl font-bold text-gray-900">Novidades</h2>
+            <p className="text-gray-500 mt-2">Acabaram de chegar</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {newProducts.map(product => (

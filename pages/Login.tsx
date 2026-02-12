@@ -13,11 +13,8 @@ export const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Tenta fazer o login usando o serviço (que vai bater no SQLite Cloud)
-    // O role 'admin' aqui é apenas um hint, o que importa é o que volta do banco
-    const roleHint = email === 'DUJAO' || email.includes('admin') ? 'admin' : 'customer';
-    
-    const success = await login(email, roleHint);
+    // Tenta fazer o login usando o serviço
+    const success = await login(email, password);
     
     if (success) {
         if (email === 'DUJAO' || email.includes('admin')) {

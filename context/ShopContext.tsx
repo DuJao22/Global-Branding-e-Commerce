@@ -12,7 +12,7 @@ interface ShopContextType {
   removeFromCart: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
-  login: (email: string, role: 'customer' | 'admin') => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   placeOrder: (details: any) => Promise<void>;
 }
@@ -98,11 +98,9 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const clearCart = () => setCart([]);
 
-  const login = async (email: string, role: 'customer' | 'admin') => { // Role mantido na assinatura p/ compatibilidade, mas ignorado na lógica real
-    // A senha está hardcoded no Login.tsx para demo, na vida real viria do form
-    // Vamos assumir '123456' para todos os logins desta demo se vier do auto-fill
+  const login = async (email: string, password: string) => {
     try {
-        const dbUser = await dbService.login(email, '123456');
+        const dbUser = await dbService.login(email, password);
         
         if (dbUser) {
             setUser(dbUser);
@@ -118,7 +116,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return true;
         } else {
-            alert("Credenciais inválidas (Tente senha: 123456)");
+            alert("Credenciais inválidas. Verifique seu login e senha.");
             return false;
         }
     } catch (e) {

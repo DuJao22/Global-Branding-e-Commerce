@@ -51,13 +51,20 @@ VALUES ('Admin Dujao', 'DUJAO', '30031936Vo.', 'admin', 'https://ui-avatars.com/
 INSERT INTO users (name, email, password, role, avatar) 
 VALUES ('Cliente Demo', 'user@globalbranding.com', '123456', 'customer', 'https://ui-avatars.com/api/?name=User&background=64748b&color=fff');
 
--- 6. Inserir Produtos Iniciais
+-- 6. Inserir Produtos Iniciais (Baseado no Inventário Real)
 INSERT INTO products (name, description, price, discount_price, sku, category, image, rating, reviews_count, stock, is_new) VALUES
-('Smart TV 4K Ultra HD 55"', 'Experimente qualidade cinematográfica com nossa mais recente Smart TV 4K HDR. Apresenta aplicativos de streaming ilimitados e áudio cristalino.', 2999.99, 2499.99, 'ELEC-TV-001', 'Eletrônicos', 'https://picsum.photos/800/800?random=1', 4.8, 124, 15, 1),
-('Fones de Ouvido Noise Cancelling', 'Mergulhe na música com o cancelamento de ruído líder da indústria. Bateria com duração de 30 horas e almofadas macias.', 1499.00, NULL, 'ELEC-AUD-002', 'Eletrônicos', 'https://picsum.photos/800/800?random=2', 4.6, 89, 45, 0),
-('Moletom Premium Masculino', 'Macio, durável e estiloso. Este moletom premium é perfeito para qualquer ocasião casual. Disponível em várias cores.', 249.90, NULL, 'FASH-MEN-003', 'Moda', 'https://picsum.photos/800/800?random=3', 4.5, 230, 100, 0),
-('Cadeira de Escritório Ergonômica', 'Trabalhe com conforto com suporte lombar e altura ajustável. Encosto em malha para respirabilidade.', 899.90, 759.90, 'HOME-FUR-004', 'Casa e Jardim', 'https://picsum.photos/800/800?random=4', 4.7, 56, 8, 0),
-('Relógio Fitness Inteligente', 'Monitore suas métricas de saúde, passos e sono. Resistente à água e compatível com iOS e Android.', 649.50, NULL, 'ELEC-WEAR-005', 'Eletrônicos', 'https://picsum.photos/800/800?random=5', 4.2, 45, 60, 0),
-('Jogo de Facas Profissional', 'Lâminas de aço inoxidável de alto carbono para corte preciso. Inclui bloco de madeira.', 399.90, NULL, 'HOME-KIT-006', 'Casa e Jardim', 'https://picsum.photos/800/800?random=6', 4.9, 312, 22, 0),
-('Tapete de Yoga Antiderrapante', 'Material ecológico com excelente aderência. Perfeito para yoga, pilates e exercícios no chão.', 129.90, NULL, 'SPORT-YOG-007', 'Esportes', 'https://picsum.photos/800/800?random=7', 4.4, 150, 200, 0),
-('Mouse Gamer Sem Fio', 'Tempo de resposta ultrarrápido, iluminação RGB e botões programáveis para a melhor experiência de jogo.', 399.90, 299.90, 'ELEC-GAM-008', 'Eletrônicos', 'https://picsum.photos/800/800?random=8', 4.7, 98, 34, 0);
+('Kit Facas Artesanais Damasco', 'Conjunto premium de 3 facas em aço damasco com cabo de madeira nobre. Corte preciso para churrasco e cozinha.', 499.90, 389.90, 'CUT-001', 'Cutelaria', 'https://images.unsplash.com/photo-1593618998160-e34014e67546?q=80&w=1000&auto=format&fit=crop', 4.9, 85, 12, 1),
+
+('Smart TV 55" 4K UHD', 'Experiência de cinema em casa. Resolução 4K real, bordas infinitas e processador rápido para seus streamings favoritos.', 2899.00, 2499.00, 'ELE-TV-002', 'Eletrônicos', 'https://images.unsplash.com/photo-1593784697501-8434372a4885?q=80&w=1000&auto=format&fit=crop', 4.8, 120, 8, 0),
+
+('Carteira de Couro Slim', 'Design minimalista em couro legítimo. Comporta cartões e CNH sem fazer volume no bolso. Elegância e praticidade.', 129.90, NULL, 'ACE-WAL-003', 'Acessórios Pessoais', 'https://images.unsplash.com/photo-1627123424574-18bd75f3194c?q=80&w=1000&auto=format&fit=crop', 4.7, 210, 50, 1),
+
+('Rede de Descanso Casal Premium', 'Rede reforçada em algodão 100% orgânico. Varanda feita à mão, ideal para varandas e áreas de lazer.', 189.90, NULL, 'CAS-HAM-004', 'Casa e Decoração', 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?q=80&w=1000&auto=format&fit=crop', 4.9, 150, 30, 0),
+
+('Kit 5 Cuecas Boxer Algodão', 'Conforto absoluto para o dia a dia. Tecido respirável, elástico macio que não marca a cintura.', 149.90, 119.90, 'MOD-UND-005', 'Moda Íntima', 'https://images.unsplash.com/photo-1579294273295-5853f631248c?q=80&w=1000&auto=format&fit=crop', 4.6, 340, 100, 0),
+
+('Tapete Aveludado Sala 2,00x2,50', 'Toque super macio, base antiderrapante e design moderno geométrico. Transforma o ambiente.', 299.90, NULL, 'CAS-RUG-006', 'Casa e Decoração', 'https://images.unsplash.com/photo-1575414723321-df6320a7b469?q=80&w=1000&auto=format&fit=crop', 4.5, 95, 15, 0),
+
+('Kit 6 Pares Meias Cano Médio', 'Meias esportivas e casuais com reforço no calcanhar. Alta durabilidade e absorção de suor.', 89.90, NULL, 'MOD-SOC-007', 'Moda Íntima', 'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=1000&auto=format&fit=crop', 4.8, 400, 200, 1),
+
+('Canivete Tático Multifuncional', 'Ferramenta robusta para camping e uso diário. Aço inox, trava de segurança e clipe de bolso.', 159.90, NULL, 'CUT-TAC-008', 'Cutelaria', 'https://images.unsplash.com/photo-1585868662495-927943c72b22?q=80&w=1000&auto=format&fit=crop', 4.7, 65, 25, 0);

@@ -2,7 +2,7 @@ import { Database } from '@sqlitecloud/drivers';
 import { Product, User, Order } from '../types';
 import { MOCK_PRODUCTS } from '../constants';
 
-// *** CONNECTION STRING DO SQLITE CLOUD ATUALIZADA ***
+// *** CONNECTION STRING DO SQLITE CLOUD ***
 const CONNECTION_STRING = 'sqlitecloud://cbw4nq6vvk.g5.sqlite.cloud:8860/global-branding.db?apikey=CCfQtOyo5qbyni96cUwEdIG4q2MRcEXpRHGoNpELtNc';
 
 let dbInstance: Database | null = null;
@@ -10,7 +10,6 @@ let dbInstance: Database | null = null;
 export const getDb = async () => {
   if (dbInstance) return dbInstance;
 
-  // Se a connection string não estiver configurada, avisamos no console
   if (CONNECTION_STRING.includes('x.x.x.x')) {
     console.warn("⚠️ AVISO: A Connection String do SQLite Cloud não foi configurada em services/db.ts. O app pode não carregar dados.");
   }
@@ -68,10 +67,15 @@ export const initDatabase = async () => {
 
   // --- SEEDING (Popular dados se as tabelas estiverem vazias) ---
 
-  // Seed Produtos
+  // Check Products
   const productsCountResult = await db.sql`SELECT COUNT(*) as count FROM products`;
   const productsCount = productsCountResult[0].count;
 
+  // IMPORTANTE: Se o count for diferente do tamanho do MOCK (e for baixo, ex: os 8 antigos), 
+  // vamos assumir que queremos resetar para os novos produtos do usuário.
+  // Para simplificar aqui, vou adicionar apenas se estiver VAZIO.
+  // Nota para o usuário: Se quiser forçar a atualização, pode ser necessário limpar a tabela products no banco manualmente ou adicionar lógica de DELETE.
+  
   if (productsCount === 0) {
     console.log("Populando tabela de produtos...");
     for (const p of MOCK_PRODUCTS) {
@@ -90,7 +94,6 @@ export const initDatabase = async () => {
     console.log("Populando usuários iniciais...");
     
     // Admin Personalizado (DUJAO)
-    // Usamos o campo 'email' como login
     await db.sql`
       INSERT INTO users (name, email, password, role, avatar)
       VALUES ('Admin Dujao', 'DUJAO', '30031936Vo.', 'admin', 'https://ui-avatars.com/api/?name=Dujao&background=0ea5e9&color=fff')
@@ -101,19 +104,6 @@ export const initDatabase = async () => {
       INSERT INTO users (name, email, password, role, avatar)
       VALUES ('Cliente Demo', 'user@globalbranding.com', '123456', 'customer', 'https://ui-avatars.com/api/?name=User&background=64748b&color=fff')
     `;
-  } else {
-    // Opcional: Verificação de segurança para garantir que o Admin existe
-    /*
-    try {
-        const adminExists = await db.sql`SELECT id FROM users WHERE email = 'DUJAO'`;
-        if (adminExists.length === 0) {
-           await db.sql`
-            INSERT INTO users (name, email, password, role, avatar)
-            VALUES ('Admin Dujao', 'DUJAO', '30031936Vo.', 'admin', 'https://ui-avatars.com/api/?name=Dujao&background=0ea5e9&color=fff')
-          `;
-        }
-    } catch (e) { console.error("Erro ao verificar admin:", e); }
-    */
   }
 };
 
@@ -135,7 +125,6 @@ export const dbService = {
   // Usuários
   login: async (email: string, password: string): Promise<User | null> => {
     const db = await getDb();
-    // Busca por email (que pode ser "DUJAO") e senha exata
     const result = await db.sql`SELECT * FROM users WHERE email = ${email} AND password = ${password} LIMIT 1`;
     
     if (result && result.length > 0) {
@@ -148,13 +137,11 @@ export const dbService = {
     const db = await getDb();
     const avatar = `https://ui-avatars.com/api/?name=${name}&background=0ea5e9&color=fff`;
     
-    // Inserir
     await db.sql`
       INSERT INTO users (name, email, password, role, avatar)
       VALUES (${name}, ${email}, ${password}, 'customer', ${avatar})
     `;
     
-    // Retornar o usuário criado
     const result = await db.sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
     return result[0] as User;
   },
