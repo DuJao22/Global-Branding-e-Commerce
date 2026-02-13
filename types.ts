@@ -35,6 +35,18 @@ export interface Order {
   customerName?: string; // Optional field for Admin view
 }
 
+export interface StoreConfig {
+  id: number;
+  storeName: string;
+  email: string;
+  phone: string;
+  address: string;
+  cityState: string;
+  instagram?: string;
+  facebook?: string;
+  twitter?: string;
+}
+
 export type SortOption = 'price-asc' | 'price-desc' | 'popularity' | 'rating';
 
 export interface FilterState {

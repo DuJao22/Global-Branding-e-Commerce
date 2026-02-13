@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
 import { Navigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, LayoutGrid, List, Eye, X, ChevronRight, Calendar, CreditCard } from 'lucide-react';
+import { Package, DollarSign, ShoppingBag, Users, Plus, Image as ImageIcon, LayoutGrid, List, Eye, X, ChevronRight, Calendar, CreditCard, Settings, Save } from 'lucide-react';
 import { CATEGORIES } from '../constants';
-import { Order } from '../types';
+import { Order, StoreConfig } from '../types';
 
 const data = [
   { name: 'Jan', sales: 4000 },
@@ -17,11 +17,25 @@ const data = [
 ];
 
 export const AdminDashboard: React.FC = () => {
-  const { user, products, orders, addProduct, updateOrderStatus } = useShop();
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders'>('overview');
+  const { user, products, orders, addProduct, updateOrderStatus, storeConfig, updateStoreSettings } = useShop();
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders' | 'settings'>('overview');
   
   // States para Modal de Pedidos
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  // States para Settings
+  const [configForm, setConfigForm] = useState<StoreConfig>({
+      id: 0,
+      storeName: '',
+      email: '',
+      phone: '',
+      address: '',
+      cityState: '',
+      instagram: '',
+      facebook: '',
+      twitter: ''
+  });
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   // Form State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -36,6 +50,12 @@ export const AdminDashboard: React.FC = () => {
     stock: '',
     sku: ''
   });
+
+  useEffect(() => {
+      if (storeConfig) {
+          setConfigForm(storeConfig);
+      }
+  }, [storeConfig]);
 
   if (!user || user.role !== 'admin') {
     return <Navigate to="/login" replace />;
@@ -93,6 +113,18 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleSaveSettings = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSavingSettings(true);
+      const success = await updateStoreSettings(configForm);
+      if (success) {
+          alert('Configurações atualizadas com sucesso!');
+      } else {
+          alert('Erro ao atualizar configurações.');
+      }
+      setIsSavingSettings(false);
+  };
+
   const getStatusColor = (status: string) => {
       switch(status) {
           case 'Paid': return 'bg-green-100 text-green-800';
@@ -139,6 +171,12 @@ export const AdminDashboard: React.FC = () => {
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'orders' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-50'}`}
                 >
                     <ShoppingBag className="inline-block w-4 h-4 mr-2" /> Pedidos
+                </button>
+                <button 
+                    onClick={() => setActiveTab('settings')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'settings' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                    <Settings className="inline-block w-4 h-4 mr-2" /> Configurações
                 </button>
             </div>
         </div>
@@ -508,6 +546,118 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                  </div>
              </div>
+        )}
+
+        {activeTab === 'settings' && (
+            <div className="animate-fade-in bg-white rounded-xl shadow-sm overflow-hidden">
+                 <div className="px-6 py-4 border-b border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-900">Configurações da Loja</h2>
+                    <p className="text-sm text-gray-500">Atualize informações de contato, endereço e redes sociais.</p>
+                 </div>
+                 
+                 <form onSubmit={handleSaveSettings} className="p-6 md:p-8 space-y-6">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         
+                         <div className="md:col-span-2">
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Loja</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                value={configForm.storeName}
+                                onChange={(e) => setConfigForm({...configForm, storeName: e.target.value})}
+                             />
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">E-mail de Contato</label>
+                             <input 
+                                type="email" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                value={configForm.email}
+                                onChange={(e) => setConfigForm({...configForm, email: e.target.value})}
+                             />
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                value={configForm.phone}
+                                onChange={(e) => setConfigForm({...configForm, phone: e.target.value})}
+                             />
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                value={configForm.address}
+                                onChange={(e) => setConfigForm({...configForm, address: e.target.value})}
+                             />
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Cidade / Estado</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                value={configForm.cityState}
+                                onChange={(e) => setConfigForm({...configForm, cityState: e.target.value})}
+                             />
+                         </div>
+
+                         <div className="md:col-span-2 border-t border-gray-100 pt-6">
+                             <h3 className="text-lg font-medium text-gray-900 mb-4">Redes Sociais</h3>
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">URL Instagram</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                placeholder="https://instagram.com/..."
+                                value={configForm.instagram || ''}
+                                onChange={(e) => setConfigForm({...configForm, instagram: e.target.value})}
+                             />
+                         </div>
+
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">URL Facebook</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                placeholder="https://facebook.com/..."
+                                value={configForm.facebook || ''}
+                                onChange={(e) => setConfigForm({...configForm, facebook: e.target.value})}
+                             />
+                         </div>
+                         
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1">URL X (Twitter)</label>
+                             <input 
+                                type="text" 
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 py-2 px-3 border"
+                                placeholder="https://x.com/..."
+                                value={configForm.twitter || ''}
+                                onChange={(e) => setConfigForm({...configForm, twitter: e.target.value})}
+                             />
+                         </div>
+
+                     </div>
+
+                     <div className="flex justify-end pt-4">
+                         <button 
+                            type="submit" 
+                            disabled={isSavingSettings}
+                            className="bg-primary-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-primary-700 shadow-md flex items-center disabled:opacity-50"
+                         >
+                            <Save className="h-5 w-5 mr-2" /> Salvar Configurações
+                         </button>
+                     </div>
+                 </form>
+            </div>
         )}
       </div>
 

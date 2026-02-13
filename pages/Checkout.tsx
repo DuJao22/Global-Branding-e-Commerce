@@ -4,7 +4,7 @@ import { useShop } from '../context/ShopContext';
 import { Check, CreditCard, Truck, MapPin, QrCode, ShieldCheck, Store, Search, ExternalLink, Wallet } from 'lucide-react';
 
 export const Checkout: React.FC = () => {
-  const { cart, user, placeOrder } = useShop();
+  const { cart, user, placeOrder, storeConfig } = useShop();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   
@@ -87,6 +87,13 @@ export const Checkout: React.FC = () => {
       navigate('/cart');
       return null;
   }
+
+  // Config fallback
+  const config = storeConfig || {
+      storeName: 'Loja Central',
+      address: 'Av. Inovação, 123',
+      cityState: 'Tech City - SP'
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
@@ -252,8 +259,8 @@ export const Checkout: React.FC = () => {
                             ) : (
                                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center animate-fade-in">
                                     <Store className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                                    <h3 className="font-bold text-gray-900 text-lg mb-2">Loja Global Branding Central</h3>
-                                    <p className="text-gray-600 mb-1">Av. Inovação, 123 - Tech City, SP</p>
+                                    <h3 className="font-bold text-gray-900 text-lg mb-2">{config.storeName}</h3>
+                                    <p className="text-gray-600 mb-1">{config.address} - {config.cityState}</p>
                                     <p className="text-sm text-gray-500 mb-4">Segunda a Sexta: 09:00 - 18:00</p>
                                     <div className="bg-white p-3 rounded-lg border border-blue-100 text-sm text-blue-800 font-medium">
                                         Seu pedido estará pronto para retirada em até 2 horas após a confirmação do pagamento.
@@ -374,7 +381,7 @@ export const Checkout: React.FC = () => {
                                             {deliveryMethod === 'delivery' ? (
                                                 <p className="text-gray-600">{address.street}, {address.number} - {address.city}/{address.state}</p>
                                             ) : (
-                                                <p className="text-gray-600">Av. Inovação, 123 - Tech City, SP</p>
+                                                <p className="text-gray-600">{config.address} - {config.cityState}</p>
                                             )}
                                         </div>
                                     </div>

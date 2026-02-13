@@ -1,5 +1,5 @@
 import { Database } from '@sqlitecloud/drivers';
-import { Product, User, Order } from '../types';
+import { Product, User, Order, StoreConfig } from '../types';
 import { MOCK_PRODUCTS } from '../constants';
 
 // *** CONNECTION STRING DO SQLITE CLOUD ***
@@ -22,7 +22,7 @@ export const getDb = async () => {
 export const initDatabase = async () => {
   const db = await getDb();
 
-  // 1. Tabela de Usuários (Updated schema definition for new installs)
+  // 1. Tabela de Usuários
   await db.sql`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,13 +34,6 @@ export const initDatabase = async () => {
       whatsapp TEXT
     );
   `;
-
-  // MIGRATION: Tenta adicionar a coluna whatsapp se ela não existir (para bancos já criados)
-  try {
-    await db.sql`ALTER TABLE users ADD COLUMN whatsapp TEXT`;
-  } catch (e) {
-    // Coluna provavelmente já existe, ignora o erro
-  }
 
   // 2. Tabela de Produtos
   await db.sql`
@@ -73,7 +66,32 @@ export const initDatabase = async () => {
     );
   `;
 
+  // 4. Tabela de Configurações da Loja
+  await db.sql`
+    CREATE TABLE IF NOT EXISTS store_config (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      store_name TEXT,
+      email TEXT,
+      phone TEXT,
+      address TEXT,
+      city_state TEXT,
+      instagram TEXT,
+      facebook TEXT,
+      twitter TEXT
+    );
+  `;
+
   // --- SEEDING (Popular dados se as tabelas estiverem vazias) ---
+
+  // Seed Config
+  const configCountResult = await db.sql`SELECT COUNT(*) as count FROM store_config`;
+  if (configCountResult[0].count === 0) {
+      console.log("Populando configurações iniciais...");
+      await db.sql`
+        INSERT INTO store_config (store_name, email, phone, address, city_state, instagram, facebook, twitter)
+        VALUES ('Global Branding', 'suporte@globalbranding.com.br', '(11) 99999-1234', 'Av. Inovação, 123, Tech City', 'São Paulo - SP', 'https://instagram.com', 'https://facebook.com', 'https://twitter.com')
+      `;
+  }
 
   // Check Products
   const productsCountResult = await db.sql`SELECT COUNT(*) as count FROM products`;
@@ -113,6 +131,44 @@ export const initDatabase = async () => {
 // --- FUNÇÕES DE SERVIÇO ---
 
 export const dbService = {
+  // Store Config
+  getStoreConfig: async (): Promise<StoreConfig | null> => {
+      const db = await getDb();
+      const rows = await db.sql`SELECT * FROM store_config LIMIT 1`;
+      if (rows.length > 0) {
+          const r = rows[0];
+          return {
+              id: r.id,
+              storeName: r.store_name,
+              email: r.email,
+              phone: r.phone,
+              address: r.address,
+              cityState: r.city_state,
+              instagram: r.instagram,
+              facebook: r.facebook,
+              twitter: r.twitter
+          };
+      }
+      return null;
+  },
+
+  updateStoreConfig: async (config: StoreConfig): Promise<boolean> => {
+      const db = await getDb();
+      try {
+          await db.sql`
+            UPDATE store_config 
+            SET store_name=${config.storeName}, email=${config.email}, phone=${config.phone}, 
+                address=${config.address}, city_state=${config.cityState}, 
+                instagram=${config.instagram}, facebook=${config.facebook}, twitter=${config.twitter}
+            WHERE id=${config.id}
+          `;
+          return true;
+      } catch (e) {
+          console.error("Erro ao atualizar config", e);
+          return false;
+      }
+  },
+
   // Produtos
   getProducts: async (): Promise<Product[]> => {
     const db = await getDb();

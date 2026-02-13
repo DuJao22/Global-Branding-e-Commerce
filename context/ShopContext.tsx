@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product, CartItem, User, Order } from '../types';
+import { Product, CartItem, User, Order, StoreConfig } from '../types';
 import { initDatabase, dbService } from '../services/db';
 
 interface ShopContextType {
@@ -7,6 +7,7 @@ interface ShopContextType {
   cart: CartItem[];
   user: User | null;
   orders: Order[];
+  storeConfig: StoreConfig | null;
   isLoading: boolean;
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: number) => void;
@@ -18,6 +19,7 @@ interface ShopContextType {
   addProduct: (product: Omit<Product, 'id'>) => Promise<boolean>;
   updateOrderStatus: (orderId: string, newStatus: Order['status']) => Promise<void>;
   updateUserProfile: (name: string, whatsapp: string) => Promise<boolean>;
+  updateStoreSettings: (config: StoreConfig) => Promise<boolean>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [cart, setCart] = useState<CartItem[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [storeConfig, setStoreConfig] = useState<StoreConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Inicialização e Carregamento de Dados
@@ -41,13 +44,17 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const dbProducts = await dbService.getProducts();
         setProducts(dbProducts);
 
-        // 3. Restaura Carrinho do LocalStorage (Carrinho permanece local para performance)
+        // 3. Busca Configuração da Loja
+        const config = await dbService.getStoreConfig();
+        setStoreConfig(config);
+
+        // 4. Restaura Carrinho do LocalStorage
         const savedCart = localStorage.getItem('gb_cart');
         if (savedCart) {
           setCart(JSON.parse(savedCart));
         }
 
-        // 4. Restaura Sessão do Usuário
+        // 5. Restaura Sessão do Usuário
         const savedUser = localStorage.getItem('gb_user');
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
@@ -151,6 +158,15 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateStoreSettings = async (config: StoreConfig) => {
+      const success = await dbService.updateStoreConfig(config);
+      if (success) {
+          setStoreConfig(config);
+          return true;
+      }
+      return false;
+  };
+
   const placeOrder = async (details: any) => {
     if (!user) {
         alert("Você precisa estar logado para finalizar a compra.");
@@ -159,7 +175,6 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const newOrder: Order = {
       id: `PED-${Math.floor(Math.random() * 10000)}`,
-      // CRITICAL CHANGE: Use full ISO string to include time for correct sorting
       date: new Date().toISOString(), 
       total: cart.reduce((sum, item) => sum + (item.discountPrice || item.price) * item.quantity, 0),
       status: 'Paid',
@@ -204,7 +219,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <ShopContext.Provider
-      value={{ products, cart, user, orders, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct, updateOrderStatus, updateUserProfile }}
+      value={{ products, cart, user, orders, storeConfig, isLoading, addToCart, removeFromCart, updateQuantity, clearCart, login, logout, placeOrder, addProduct, updateOrderStatus, updateUserProfile, updateStoreSettings }}
     >
       {children}
     </ShopContext.Provider>
