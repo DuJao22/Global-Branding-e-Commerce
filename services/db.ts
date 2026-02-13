@@ -1,285 +1,185 @@
-import { Database } from '@sqlitecloud/drivers';
 import { Product, User, Order, StoreConfig } from '../types';
-import { MOCK_PRODUCTS } from '../constants';
+import { MOCK_PRODUCTS, MOCK_ORDERS } from '../constants';
 
-// *** CONNECTION STRING DO SQLITE CLOUD ***
-const CONNECTION_STRING = 'sqlitecloud://cbw4nq6vvk.g5.sqlite.cloud:8860/global-branding.db?apikey=CCfQtOyo5qbyni96cUwEdIG4q2MRcEXpRHGoNpELtNc';
+// A URL agora é sempre relativa (vazia) porque configuramos um Proxy no vite.config.ts
+// Isso redireciona /api para http://localhost:3000 automaticamente em desenvolvimento
+// e funciona nativamente em produção (mesmo domínio).
+const API_URL = ''; 
 
-let dbInstance: Database | null = null;
-
-export const getDb = async () => {
-  if (dbInstance) return dbInstance;
-
-  if (CONNECTION_STRING.includes('x.x.x.x')) {
-    console.warn("⚠️ AVISO: A Connection String do SQLite Cloud não foi configurada em services/db.ts. O app pode não carregar dados.");
-  }
-
-  dbInstance = new Database(CONNECTION_STRING);
-  return dbInstance;
-};
-
-// Inicializa o Banco de Dados (Cria tabelas se não existirem e popula dados iniciais)
 export const initDatabase = async () => {
-  const db = await getDb();
-
-  // 1. Tabela de Usuários
-  await db.sql`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('customer', 'admin')),
-      avatar TEXT,
-      whatsapp TEXT
-    );
-  `;
-
-  // 2. Tabela de Produtos
-  await db.sql`
-    CREATE TABLE IF NOT EXISTS products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      description TEXT,
-      price REAL NOT NULL,
-      discount_price REAL,
-      sku TEXT,
-      category TEXT,
-      image TEXT,
-      rating REAL,
-      reviews_count INTEGER,
-      stock INTEGER,
-      is_new INTEGER
-    );
-  `;
-
-  // 3. Tabela de Pedidos
-  await db.sql`
-    CREATE TABLE IF NOT EXISTS orders (
-      id TEXT PRIMARY KEY,
-      user_id INTEGER,
-      date TEXT,
-      total REAL,
-      status TEXT,
-      items_json TEXT, 
-      FOREIGN KEY(user_id) REFERENCES users(id)
-    );
-  `;
-
-  // 4. Tabela de Configurações da Loja
-  await db.sql`
-    CREATE TABLE IF NOT EXISTS store_config (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      store_name TEXT,
-      email TEXT,
-      phone TEXT,
-      address TEXT,
-      city_state TEXT,
-      instagram TEXT,
-      facebook TEXT,
-      twitter TEXT
-    );
-  `;
-
-  // --- SEEDING (Popular dados se as tabelas estiverem vazias) ---
-
-  // Seed Config
-  const configCountResult = await db.sql`SELECT COUNT(*) as count FROM store_config`;
-  if (configCountResult[0].count === 0) {
-      console.log("Populando configurações iniciais...");
-      await db.sql`
-        INSERT INTO store_config (store_name, email, phone, address, city_state, instagram, facebook, twitter)
-        VALUES ('Global Branding', 'suporte@globalbranding.com.br', '(11) 99999-1234', 'Av. Inovação, 123, Tech City', 'São Paulo - SP', 'https://instagram.com', 'https://facebook.com', 'https://twitter.com')
-      `;
-  }
-
-  // Check Products
-  const productsCountResult = await db.sql`SELECT COUNT(*) as count FROM products`;
-  const productsCount = productsCountResult[0].count;
-  
-  if (productsCount === 0) {
-    console.log("Populando tabela de produtos...");
-    for (const p of MOCK_PRODUCTS) {
-      await db.sql`
-        INSERT INTO products (name, description, price, discount_price, sku, category, image, rating, reviews_count, stock, is_new)
-        VALUES (${p.name}, ${p.description}, ${p.price}, ${p.discountPrice || null}, ${p.sku}, ${p.category}, ${p.image}, ${p.rating}, ${p.reviewsCount}, ${p.stock}, ${p.isNew ? 1 : 0})
-      `;
-    }
-  }
-
-  // Seed Usuários
-  const usersCountResult = await db.sql`SELECT COUNT(*) as count FROM users`;
-  const usersCount = usersCountResult[0].count;
-
-  if (usersCount === 0) {
-    console.log("Populando usuários iniciais...");
-    
-    // Admin Personalizado (DUJAO)
-    await db.sql`
-      INSERT INTO users (name, email, password, role, avatar)
-      VALUES ('Admin Dujao', 'DUJAO', '30031936Vo.', 'admin', 'https://ui-avatars.com/api/?name=Dujao&background=0ea5e9&color=fff')
-    `;
-
-    // Cliente Demo
-    await db.sql`
-      INSERT INTO users (name, email, password, role, avatar)
-      VALUES ('Cliente Demo', 'user@globalbranding.com', '123456', 'customer', 'https://ui-avatars.com/api/?name=User&background=64748b&color=fff')
-    `;
-  }
+  // A inicialização agora ocorre no servidor ao iniciar (server.js)
+  console.log("App conectado à API.");
 };
 
-// --- FUNÇÕES DE SERVIÇO ---
+// --- FUNÇÕES DE SERVIÇO (FRONTEND -> API) ---
 
 export const dbService = {
   // Store Config
   getStoreConfig: async (): Promise<StoreConfig | null> => {
-      const db = await getDb();
-      const rows = await db.sql`SELECT * FROM store_config LIMIT 1`;
-      if (rows.length > 0) {
-          const r = rows[0];
-          return {
-              id: r.id,
-              storeName: r.store_name,
-              email: r.email,
-              phone: r.phone,
-              address: r.address,
-              cityState: r.city_state,
-              instagram: r.instagram,
-              facebook: r.facebook,
-              twitter: r.twitter
-          };
+      try {
+          const res = await fetch(`${API_URL}/api/config`);
+          if (!res.ok) throw new Error('Falha ao buscar config');
+          return await res.json();
+      } catch (e) {
+          // Fallback silencioso para não quebrar a UI se o backend estiver offline
+          console.warn("Backend não detectado ou erro de conexão. Usando padrões.");
+          return null;
       }
-      return null;
   },
 
   updateStoreConfig: async (config: StoreConfig): Promise<boolean> => {
-      const db = await getDb();
       try {
-          await db.sql`
-            UPDATE store_config 
-            SET store_name=${config.storeName}, email=${config.email}, phone=${config.phone}, 
-                address=${config.address}, city_state=${config.cityState}, 
-                instagram=${config.instagram}, facebook=${config.facebook}, twitter=${config.twitter}
-            WHERE id=${config.id}
-          `;
-          return true;
+          const res = await fetch(`${API_URL}/api/config`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(config)
+          });
+          return res.ok;
       } catch (e) {
-          console.error("Erro ao atualizar config", e);
+          console.error(e);
           return false;
       }
   },
 
   // Produtos
   getProducts: async (): Promise<Product[]> => {
-    const db = await getDb();
-    const rows = await db.sql`SELECT * FROM products ORDER BY id DESC`;
-    return rows.map((row: any) => ({
-      ...row,
-      discountPrice: row.discount_price,
-      reviewsCount: row.reviews_count,
-      isNew: row.is_new === 1
-    }));
+    try {
+        const res = await fetch(`${API_URL}/api/products`);
+        if (!res.ok) throw new Error('API Offline');
+        return await res.json();
+    } catch (e) {
+        console.warn("API Offline, carregando produtos mockados.");
+        return MOCK_PRODUCTS;
+    }
   },
 
   addProduct: async (product: Omit<Product, 'id'>): Promise<Product> => {
-    const db = await getDb();
-    const result = await db.sql`
-      INSERT INTO products (name, description, price, discount_price, sku, category, image, rating, reviews_count, stock, is_new)
-      VALUES (${product.name}, ${product.description}, ${product.price}, ${product.discountPrice || null}, ${product.sku}, ${product.category}, ${product.image}, ${product.rating}, ${product.reviewsCount}, ${product.stock}, ${product.isNew ? 1 : 0})
-    `;
-    
-    const rows = await db.sql`SELECT * FROM products ORDER BY id DESC LIMIT 1`;
-    const row = rows[0];
-
-    return {
-      ...row,
-      discountPrice: row.discount_price,
-      reviewsCount: row.reviews_count,
-      isNew: row.is_new === 1
-    };
+    const res = await fetch(`${API_URL}/api/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+    });
+    if (!res.ok) throw new Error('Erro ao criar produto');
+    return await res.json();
   },
 
   // Usuários
   login: async (email: string, password: string): Promise<User | null> => {
-    const db = await getDb();
-    const result = await db.sql`SELECT * FROM users WHERE email = ${email} AND password = ${password} LIMIT 1`;
-    
-    if (result && result.length > 0) {
-      return result[0] as User;
+    try {
+        const res = await fetch(`${API_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        
+        if (res.ok) {
+            return await res.json();
+        }
+        return null;
+    } catch (e) {
+        console.warn("API Offline, tentando login demo local.");
+        // Fallback para demonstração sem backend
+        if (email === 'user@globalbranding.com' && password === '123456') {
+             return { id: 999, name: 'Cliente Demo', email, role: 'customer', avatar: 'https://ui-avatars.com/api/?name=User' };
+        }
+        if (email === 'DUJAO' && password === '30031936Vo.') {
+             return { id: 1, name: 'Admin Dujao', email, role: 'admin', avatar: 'https://ui-avatars.com/api/?name=Admin' };
+        }
+        return null;
     }
-    return null;
   },
 
   updateUserProfile: async (userId: number, name: string, whatsapp: string): Promise<boolean> => {
-    const db = await getDb();
     try {
-        await db.sql`UPDATE users SET name = ${name}, whatsapp = ${whatsapp} WHERE id = ${userId}`;
-        return true;
+        const res = await fetch(`${API_URL}/api/users/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, whatsapp })
+        });
+        return res.ok;
     } catch (e) {
-        console.error("Erro ao atualizar perfil", e);
+        console.error(e);
         return false;
     }
   },
 
   register: async (name: string, email: string, password: string): Promise<User> => {
-    const db = await getDb();
-    const avatar = `https://ui-avatars.com/api/?name=${name}&background=0ea5e9&color=fff`;
-    
-    await db.sql`
-      INSERT INTO users (name, email, password, role, avatar)
-      VALUES (${name}, ${email}, ${password}, 'customer', ${avatar})
-    `;
-    
-    const result = await db.sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
-    return result[0] as User;
+    const res = await fetch(`${API_URL}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+    });
+    if (!res.ok) throw new Error('Erro ao registrar');
+    return await res.json();
   },
 
   // Pedidos
   createOrder: async (order: Order, userId: number) => {
-    const db = await getDb();
-    const itemsJson = JSON.stringify(order.items);
-    
-    await db.sql`
-      INSERT INTO orders (id, user_id, date, total, status, items_json)
-      VALUES (${order.id}, ${userId}, ${order.date}, ${order.total}, ${order.status}, ${itemsJson})
-    `;
+    try {
+        await fetch(`${API_URL}/api/orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: order.id,
+                userId,
+                date: order.date,
+                total: order.total,
+                status: order.status,
+                items: order.items
+            })
+        });
+    } catch (e) {
+        console.error("Erro ao criar pedido (Backend Offline?)", e);
+    }
   },
 
   updateOrderStatus: async (orderId: string, newStatus: string) => {
-    const db = await getDb();
-    await db.sql`UPDATE orders SET status = ${newStatus} WHERE id = ${orderId}`;
+    try {
+        await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+    } catch (e) {
+        console.error(e);
+    }
   },
 
   getOrdersByUser: async (userId: number): Promise<Order[]> => {
-    const db = await getDb();
-    const rows = await db.sql`SELECT * FROM orders WHERE user_id = ${userId} ORDER BY date DESC`;
-    
-    return rows.map((row: any) => ({
-      id: row.id,
-      date: row.date,
-      total: row.total,
-      status: row.status,
-      items: JSON.parse(row.items_json || '[]')
-    }));
+    try {
+        const res = await fetch(`${API_URL}/api/orders?userId=${userId}`);
+        if (!res.ok) throw new Error('API Error');
+        return await res.json();
+    } catch (e) {
+        console.warn("API Offline, sem histórico de pedidos.");
+        return [];
+    }
   },
 
   getAllOrders: async (): Promise<Order[]> => {
-    const db = await getDb();
-    // JOIN para pegar o nome do usuário
-    const rows = await db.sql`
-        SELECT orders.*, users.name as user_name 
-        FROM orders 
-        JOIN users ON orders.user_id = users.id 
-        ORDER BY orders.date DESC
-    `;
-    
-    return rows.map((row: any) => ({
-      id: row.id,
-      date: row.date,
-      total: row.total,
-      status: row.status,
-      items: JSON.parse(row.items_json || '[]'),
-      customerName: row.user_name
-    }));
+    try {
+        const res = await fetch(`${API_URL}/api/orders`); // Admin endpoint (sem userId)
+        if (!res.ok) throw new Error('API Error');
+        return await res.json();
+    } catch (e) {
+        console.warn("API Offline, carregando pedidos mockados.");
+        return MOCK_ORDERS.map(o => ({...o, items: []} as any));
+    }
+  },
+
+  // Stripe
+  createCheckoutSession: async (items: any[], orderId: string): Promise<string | null> => {
+      try {
+          const res = await fetch(`${API_URL}/api/create-checkout-session`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items, orderId })
+          });
+          const data = await res.json();
+          return data.url;
+      } catch (e) {
+          console.error("Erro no Stripe:", e);
+          return null;
+      }
   }
 };
